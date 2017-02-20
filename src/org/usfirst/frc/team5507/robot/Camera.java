@@ -1,5 +1,7 @@
 package org.usfirst.frc.team5507.robot;
 
+// This is really awesome robot code.
+
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
