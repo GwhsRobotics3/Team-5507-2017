@@ -13,7 +13,6 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.XboxController;
 public class Camera {
 	
 	public Object imgLock = new Object();
@@ -103,9 +102,7 @@ public class Camera {
 				SmartDashboard.putNumber("CenterY", this.getCenterY());
 				
 				continue;
-
 			}
-			
 		});	
 		visionThread.setDaemon(true);
 		visionThread.start();
