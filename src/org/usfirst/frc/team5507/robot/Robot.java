@@ -144,6 +144,9 @@ public class Robot extends IterativeRobot {
 		return cameraOffsetFromCenter;
 	}
 	
+	/**
+	 * Use this autonomous mode when starting from the center
+	 */
 	public void autonomousCamera(){
 		
 		
@@ -214,16 +217,16 @@ public class Robot extends IterativeRobot {
 	public void teleopInit() { 
 	}
 		
-	public void openGearHolder(){
+	public void closeGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kReverse);
 		solenoid2.set(DoubleSolenoid.Value.kReverse);
-		SmartDashboard.putString("Gear holder: ", "Open");
+		SmartDashboard.putString("Gear holder: ", "Closed");
 	}
 	
-	public void closeGearHolder(){
+	public void openGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kForward);
 		solenoid2.set(DoubleSolenoid.Value.kForward);
-		SmartDashboard.putString("Gear holder: ", "Closed");
+		SmartDashboard.putString("Gear holder: ", "Open");
 	}
 
 	/**
@@ -260,7 +263,7 @@ public class Robot extends IterativeRobot {
 			xDrive = this.getCameraOffsetFromCenter();
 		}
 		
-		myRobot.mecanumDrive_Cartesian(xDrive*0.5, yDrive*0.5, rotateDrive*0.5,0);
+		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0);
 		
 		SmartDashboard.putNumber("xDrive: ", xDrive);
 		SmartDashboard.putNumber("yDrive: ", yDrive);
