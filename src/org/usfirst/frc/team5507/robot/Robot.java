@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 	SendableChooser autoChooser;
 	
 	Joystick stick = new Joystick(0); 
-	RobotDrive myRobot = new RobotDrive(1, 0, 2, 3);
+	RobotDrive myRobot = new RobotDrive(0, 1, 2, 3);
 	Spark climber = new Spark(4);
 	 
 	Timer timer = new Timer();
