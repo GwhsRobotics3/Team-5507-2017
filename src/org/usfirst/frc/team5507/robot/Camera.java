@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5507.robot;
 
-// This is really awesome robot code.
+// This is really awesome camera code.
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
