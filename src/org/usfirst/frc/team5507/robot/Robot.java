@@ -210,11 +210,13 @@ public class Robot extends IterativeRobot {
 	public void openGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kReverse);
 		solenoid2.set(DoubleSolenoid.Value.kReverse);
+		SmartDashboard.putString("Gear holder: ", "Open");
 	}
 	
 	public void closeGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kForward);
 		solenoid2.set(DoubleSolenoid.Value.kForward);
+		SmartDashboard.putString("Gear holder: ", "Closed");
 	}
 
 	/**
