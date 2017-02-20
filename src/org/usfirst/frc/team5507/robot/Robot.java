@@ -117,6 +117,9 @@ public class Robot extends IterativeRobot {
 				//myRobot.mecanumDrive_Cartesian(0.09, -1, 0, 0); //forward
 	}
 	
+	/**
+	 *This is code for the "Drive Straight" option in autonomous code.
+	 */
 	public void autonomousDriveStraight(){
 		switch (autonomousState){
 		case 0:
@@ -129,6 +132,10 @@ public class Robot extends IterativeRobot {
 		}
 	}
 	
+	/**
+	 * Code that gets a value from -1 to 1 representing x value distance from center.
+	 * @return value from -1 to 1 representing offset from center
+	 */
 	public double getCameraOffsetFromCenter(){
 		int cameraOffsetFromCenter = 0;
 		if(camera.getCenterX() != 0){

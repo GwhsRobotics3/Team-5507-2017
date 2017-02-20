@@ -23,7 +23,7 @@ public class Camera {
 	private double centerY = 0.0;
 	private double centerXAvg = 0.0;
 	private double centerYAvg = 0.0;
-	private double rectangleArea=0.0;
+	private double rectangleArea = 0.0;
 	private int imgWidth = 320;
 	private int imgHeight = 240;
 	public static double[] queueX = new double[5];
@@ -46,9 +46,9 @@ public class Camera {
 		//UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 		AxisCamera camera = CameraServer.getInstance().addAxisCamera("10.55.7.37");
 		
-		camera.setBrightness(0);
-		camera.setExposureManual(0);
-		camera.setWhiteBalanceManual(3000);
+//		camera.setBrightness(0);
+//		camera.setExposureManual(0);
+//		camera.setWhiteBalanceManual(3000);
 		
 		//camera.setResolution(imgWidth, imgHeight);
 		//UsbCamera camera = CameraServer.getInstance().
