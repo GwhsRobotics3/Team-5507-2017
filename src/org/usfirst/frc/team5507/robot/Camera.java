@@ -79,6 +79,7 @@ public class Camera {
 						Rect rectI = Imgproc.boundingRect(pipeline.filterContoursOutput().get(i));
 						//Imgproc.rectangle(mat, new Point(rectI.x,rectI.y), new Point(rectI.x+rectI.width,rectI.y+rectI.height), new Scalar(255, 255, 255), 2);
 						if(rectI.area()>biggestRect.area()){
+							secondBiggestRect = biggestRect.clone();
 							biggestRect = rectI.clone();
 						}
 						else if(rectI.area()>secondBiggestRect.area()){
@@ -87,15 +88,13 @@ public class Camera {
 					}
 					centerX = (biggestRect.x+biggestRect.width/2 + secondBiggestRect.x+secondBiggestRect.width/2)/2;
 					centerY = (biggestRect.y+biggestRect.height/2 + secondBiggestRect.y+secondBiggestRect.height/2)/2;
-					centerXAvg = this.averageCenter(queueX, centerX);
-					centerYAvg = this.averageCenter(queueY, centerY);
-					//Imgproc.rectangle(mat, new Point(centerXAvg-1,40), new Point(centerXAvg+1,60), new Scalar(0, 50, 220), 5);
-						Imgproc.rectangle(mat, new Point(biggestRect.x,biggestRect.y), new Point(biggestRect.x+biggestRect.width,biggestRect.y+biggestRect.height), new Scalar(255, 255, 255), 2);
-						Imgproc.rectangle(mat, new Point(secondBiggestRect.x,secondBiggestRect.y), new Point(secondBiggestRect.x+secondBiggestRect.width,secondBiggestRect.y+secondBiggestRect.height), new Scalar(255, 255, 255), 2);
-					//Rect rectOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)); //get the first MatOfPoint (contour), calculate bounding rectangle
+					//centerXAvg = this.averageCenter(queueX, centerX);
+					//centerYAvg = this.averageCenter(queueY, centerY);
+					Imgproc.rectangle(mat, new Point(secondBiggestRect.x,secondBiggestRect.y), new Point(secondBiggestRect.x+secondBiggestRect.width,secondBiggestRect.y+secondBiggestRect.height), new Scalar(255, 255, 255), 2);
+					Imgproc.rectangle(mat, new Point(biggestRect.x,biggestRect.y), new Point(biggestRect.x+biggestRect.width,biggestRect.y+biggestRect.height), new Scalar(255, 255, 255), 2);					//Rect rectOne = Imgproc.boundingRect(pipeline.filterContoursOutput().get(0)); //get the first MatOfPoint (contour), calculate bounding rectangle
 					//Imgproc.rectangle(mat, new Point(rectOne.x,rectOne.y), new Point(rectOne.x+rectOne.width,rectOne.y+rectOne.height), new Scalar(255, 0, 0), 5);
 				}
-				Imgproc.rectangle(mat, new Point(centerXAvg-1,centerYAvg-1), new Point(centerXAvg+1,centerYAvg+1), new Scalar(0, 50, 220), 5);
+				Imgproc.rectangle(mat, new Point(centerX-1,centerY-1), new Point(centerX+1,centerY+1), new Scalar(0, 50, 220), 5);
 				//Imgproc.rectangle(mat2, new Point(50,50), new Point(100,100), new Scalar(255, 0, 0), 5);			
 				outputStream.putFrame(mat); //give stream (and CameraServer) a new frame
 				SmartDashboard.putNumber("numberOfContoursFound", pipeline.filterContoursOutput().size());
@@ -117,13 +116,13 @@ public class Camera {
 	
 	public double getCenterY() {
 		synchronized(imgLock) {
-			return centerYAvg;
+			return centerY;
 		}
 	}
 
 	public double getCenterX() {
 		synchronized(imgLock) {
-			return centerXAvg;
+			return centerX;
 		}
 	}
 	
