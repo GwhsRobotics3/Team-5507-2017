@@ -97,6 +97,7 @@ public class Robot extends IterativeRobot {
 		timerAuto.start();
 		caseAuto = (int) autoChooser.getSelected();
 		autonomousState = 0;
+		c.setClosedLoopControl(true);
 	}
 
 	/**
@@ -264,11 +265,11 @@ public class Robot extends IterativeRobot {
 			}
 			break;
 		case 1: //drive forward until we get to the gear peg
-			if(this.getCameraOffsetFromCenter()<-0.2){
+			if(this.getCameraOffsetFromCenter()<-0.05){
 				xDrive = -0.4;
 			}
-			else if(this.getCameraOffsetFromCenter()>0.2){
-				xDrive = 0.25; //right
+			else if(this.getCameraOffsetFromCenter()>0.05){
+				xDrive = 0.4; //right
 			}
 			yDrive = -0.25; //forward
 			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
@@ -399,11 +400,11 @@ public class Robot extends IterativeRobot {
 		//computer assisted line-up
 		if(stick.getRawButton(6))
 		{
-			if(this.getCameraOffsetFromCenter()<-0.2){
-				xDrive = -0.5;
+			if(this.getCameraOffsetFromCenter()<-0.05){
+				xDrive = -0.4;
 			}
-			else if(this.getCameraOffsetFromCenter()>0.2){
-				xDrive = 0.5; //right
+			else if(this.getCameraOffsetFromCenter()>0.05){
+				xDrive = 0.4; //right
 			}
 			SmartDashboard.putString("Assist Mode: ", "on");
 		}
