@@ -69,8 +69,6 @@ public class Camera {
 				
 				// Try to get the smart dashboard to display the filtered mat correctly, although this is weird
 				// -> Are there colorspace issues?
-				
-				//Mat mat2 = pipeline.hsvThresholdOutput();
 				if(pipeline.filterContoursOutput().size() > 1)
 				{
 					Rect biggestRect = new Rect(0, 0, 0, 0);

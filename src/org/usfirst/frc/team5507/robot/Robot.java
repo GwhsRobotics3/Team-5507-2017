@@ -47,20 +47,20 @@ public class Robot extends IterativeRobot {
 	Timer timerAuto = new Timer();
 	Timer timerPneumatics = new Timer();
 	
+	//private GripPipeline pipeline;
+	
 	Compressor c = new Compressor(0);
 	
 	int caseAuto = 0;
 	int state = 0;
 	int autonomousState = 0;
 	
+	
 	DigitalOutput relay = new DigitalOutput(0);
 	
 	DoubleSolenoid solenoid1 = new DoubleSolenoid(0, 1);
 	DoubleSolenoid solenoid2 = new DoubleSolenoid(2, 3);
 	
-	private VisionThread visionThread;
-	private double centerX = 0.0;
-	private GripPipeline pipeline = new GripPipeline();
 	static Camera camera;
 	private final Object imgLock = new Object();
 	
@@ -70,12 +70,14 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		this.closeGearHolder();
+		//pipeline = new GripPipeline();
 		camera = new Camera();
 		autoChooser = new SendableChooser();
 		autoChooser.addDefault("Box", 0);
 		autoChooser.addObject("Camera", 1);
 		autoChooser.addObject("Straight", 2);
+		autoChooser.addObject("Camera Left", 3);
+
 		SmartDashboard.putData("Autonomous Mode Chooser", autoChooser);
 		myRobot.setInvertedMotor(MotorType.kRearLeft, false);
 		myRobot.setInvertedMotor(MotorType.kFrontLeft, false);
@@ -89,10 +91,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		this.closeGearHolder();
 		timer.reset();
 		timer.start();
 		timerAuto.start();
-		caseAuto = (int) autoChooser.getSelected();	
+		caseAuto = (int) autoChooser.getSelected();
+		autonomousState = 0;
 	}
 
 	/**
@@ -102,19 +106,43 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		SmartDashboard.putNumber("autoTimer", timerAuto.get());
 		SmartDashboard.putNumber("caseAuto", caseAuto);
-		
+
 		switch(caseAuto){
 		case 0:
 			this.autonomousBox();
+			break;
 		case 1:
 			this.autonomousCamera();
+			break;
 		case 2:
 			this.autonomousDriveStraight();
+			break;
+		case 3:
+			this.autonomousCameraLeftSide();
+			break;
 		}
 				//myRobot.mecanumDrive_Cartesian(1, -0.055, 0, 0); //right
 				//myRobot.mecanumDrive_Cartesian(-1, 0.07, -0.1025, 0);// left
 				//myRobot.mecanumDrive_Cartesian(0.15, 1, 0, 0); //back
 				//myRobot.mecanumDrive_Cartesian(0.09, -1, 0, 0); //forward
+	}
+	
+	public double getCameraHorizontal(){ //image is rotated 270 degrees because camera is placed sideways
+		double cameraOffsetFromCenter = 0;
+		double temp_centerY = camera.getCenterY();
+		double temp_imgHeight = (double)camera.getImgHeight();
+		double temp_numerator = temp_centerY-temp_imgHeight/2.0;
+		cameraOffsetFromCenter = temp_numerator/(temp_imgHeight/2.0);
+		return cameraOffsetFromCenter;
+	}
+	
+	public double getCameraVertical(){
+		double cameraOffsetFromCenter = 0;
+		double temp_centerX = camera.getCenterX();
+		double temp_imgWidth = (double)camera.getImgWidth();
+		double temp_numerator = temp_centerX-temp_imgWidth/2.0;
+		cameraOffsetFromCenter = temp_numerator/(temp_imgWidth/2.0);
+		return cameraOffsetFromCenter;
 	}
 	
 	/**
@@ -124,12 +152,19 @@ public class Robot extends IterativeRobot {
 		switch (autonomousState){
 		case 0:
 			myRobot.mecanumDrive_Cartesian(0.09, -1, 0, 0);
-			if(timerAuto.get() > 3.0){
+			if(timerAuto.get() > 0.5){
 				autonomousState = 1;
 			}
+			break;
 		case 1:
 			myRobot.mecanumDrive_Cartesian(0, 0, 0, 0);
+			break;
 		}
+		
+	}
+	
+	public double getDistanceToWallInInches(double x){
+		return 0.0039494*x*x-2.3615*x+361.92;
 	}
 	
 	/**
@@ -137,56 +172,155 @@ public class Robot extends IterativeRobot {
 	 * @return value from -1 to 1 representing offset from center
 	 */
 	public double getCameraOffsetFromCenter(){ //image is rotated 270 degrees
-		double cameraOffsetFromCenter = 0;
-		if(camera.getCenterY() != 0){
-			double temp_centerY = camera.getCenterY();
-			double temp_imgHeight = (double)camera.getImgHeight();
-			double temp_numerator = temp_centerY-temp_imgHeight/2.0;
-			cameraOffsetFromCenter = temp_numerator/(temp_imgHeight/2.0);
-			//cameraOffsetFromCenter = ((camera.getCenterY()-(double)(camera.getImgHeight())/2.0))/(double)(camera.getImgHeight())/2.0;
-		}
-		return cameraOffsetFromCenter;
+		return this.getCameraHorizontal();
 	}
 	
 	/**
 	 * Use this autonomous mode when starting from the center
 	 */
 	public void autonomousCamera(){
-		
+		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
+		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
+		double xDrive = 0;
+		double yDrive = 0;
+		double rotateDrive = 0;
 		
 		switch(autonomousState){
 		case 0: //drive forward until we get to the gear peg
-			myRobot.mecanumDrive_Cartesian(this.getCameraOffsetFromCenter(), -1, 0, 0); //forward
-			if(camera.getCenterX() == 0){
+			if(this.getCameraOffsetFromCenter()<-0.2){
+				xDrive = -0.25;
+			}
+			else if(this.getCameraOffsetFromCenter()>0.2){
+				xDrive = 0.25; //right
+			}
+			yDrive = -0.25; //forward
+			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
 				autonomousState = 1;
 				timerAuto.reset();
 			}
-		case 1: //open gear holder and wait
+			break;
+		case 1:
+			xDrive = this.getCameraOffsetFromCenter()*(0.25);
+			yDrive = -0.25;//forward
+			if(timerAuto.get() > 1.0){
+				autonomousState = 2;
+				timerAuto.reset();
+			}
+			break;
+		case 2: //open gear holder and wait
 			this.openGearHolder();
+			if(timerAuto.get() > 1.5){
+				autonomousState =3;
+				timerAuto.reset();
+			}
+			break;
+		case 3: //drive back to clear
+			xDrive = 0.15*0.25;
+			yDrive = 0.25;//back
 			if(timerAuto.get() > 3.0){
-				autonomousState =2;
 				timerAuto.reset();
-			}
-		case 2: //drive back to clear
-			myRobot.mecanumDrive_Cartesian(0.15, 1, 0, 0); //back
-			this.closeGearHolder();
-			if(timerAuto.get() > 0.5){
-				timerAuto.reset();
-				autonomousState = 3;
-			}
-		case 3:
-			myRobot.mecanumDrive_Cartesian(1, -0.055, 0, 0); //right
-			if(timerAuto.get() > 0.5){
 				autonomousState = 4;
 			}
+			break;
 		case 4:
-			myRobot.mecanumDrive_Cartesian(this.getCameraOffsetFromCenter(), -1, 0, 0); //forward
-			if(timerAuto.get() > 4.0){
+			this.closeGearHolder();
+			xDrive = 1*0.25;
+			yDrive = -0.055*0.25;//right
+			if(timerAuto.get() > 0.5){
 				autonomousState = 5;
 			}
+			break;
 		case 5:
-			myRobot.mecanumDrive_Cartesian(0, 0, 0, 0);
+			xDrive = this.getCameraOffsetFromCenter()*0.25;
+			yDrive = -1*0.25; //forward
+			if(timerAuto.get() > 4.0){
+				autonomousState = 6;
+			}
+			break;
+		case 6:
+			break;
 		}
+		SmartDashboard.putNumber("xDrive: ", xDrive);
+		SmartDashboard.putNumber("yDrive: ", yDrive);
+		SmartDashboard.putNumber("rotateDrive: ", rotateDrive);
+		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
+	}
+	public void autonomousCameraLeftSide(){
+		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
+		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
+		double xDrive = 0;
+		double yDrive = 0;
+		double rotateDrive = 0;
+		
+		switch(autonomousState){
+		case 0:
+			xDrive = -0.5;
+			yDrive = 0;
+			rotateDrive = -0.025;
+			
+			if(camera.getContoursFound() > 1 && (this.getCameraHorizontal()<0.1 && this.getCameraHorizontal()>-0.1)){
+				autonomousState = 1;
+				timerAuto.reset();
+			}
+			break;
+		case 1: //drive forward until we get to the gear peg
+			if(this.getCameraOffsetFromCenter()<-0.2){
+				xDrive = -0.4;
+			}
+			else if(this.getCameraOffsetFromCenter()>0.2){
+				xDrive = 0.25; //right
+			}
+			yDrive = -0.25; //forward
+			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
+				autonomousState = 2;
+				timerAuto.reset();
+			}
+			break;
+		case 2:
+			xDrive = this.getCameraOffsetFromCenter()*(0.25);
+			yDrive = -0.25;//forward
+			if(timerAuto.get() > 1.0){
+				autonomousState = 3;
+				timerAuto.reset();
+			}
+			break;
+		case 3: //open gear holder and wait
+			this.openGearHolder();
+			if(timerAuto.get() > 1.5){
+				autonomousState =4;
+				timerAuto.reset();
+			}
+			break;
+		case 4: //drive back to clear
+			xDrive = 0.15*0.25;
+			yDrive = 0.25;//back
+			if(timerAuto.get() > 3.0){
+				timerAuto.reset();
+				autonomousState = 5;
+			}
+			break;
+		case 5:
+			this.closeGearHolder();
+			xDrive = 1*0.25;
+			yDrive = -0.055*0.25;//right
+			if(timerAuto.get() > 0.5){
+				autonomousState = 6;
+			}
+			break;
+		case 6:
+			xDrive = this.getCameraOffsetFromCenter()*0.25;
+			yDrive = -1*0.25; //forward
+			if(timerAuto.get() > 4.0){
+				autonomousState = 7;
+			}
+			break;
+		case 7:
+			break;
+		}
+		SmartDashboard.putNumber("xDrive: ", xDrive);
+		SmartDashboard.putNumber("yDrive: ", yDrive);
+		SmartDashboard.putNumber("rotateDrive: ", rotateDrive);
+		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
 	}
 		
 	public void autonomousBox(){
@@ -219,18 +353,19 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() { 
+		this.closeGearHolder();
 	}
 		
 	public void closeGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kReverse);
 		solenoid2.set(DoubleSolenoid.Value.kReverse);
-		SmartDashboard.putString("Gear holder: ", "Closed");
+		SmartDashboard.putString("Gear holder: ", "Open");
 	}
 	
 	public void openGearHolder(){
 		solenoid1.set(DoubleSolenoid.Value.kForward);
 		solenoid2.set(DoubleSolenoid.Value.kForward);
-		SmartDashboard.putString("Gear holder: ", "Open");
+		SmartDashboard.putString("Gear holder: ", "Closed");
 	}
 
 	/**
@@ -264,9 +399,13 @@ public class Robot extends IterativeRobot {
 		//computer assisted line-up
 		if(stick.getRawButton(6))
 		{
-			xDrive = this.getCameraOffsetFromCenter();
+			if(this.getCameraOffsetFromCenter()<-0.2){
+				xDrive = -0.5;
+			}
+			else if(this.getCameraOffsetFromCenter()>0.2){
+				xDrive = 0.5; //right
+			}
 			SmartDashboard.putString("Assist Mode: ", "on");
-			myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0);
 		}
 		else{
 			SmartDashboard.putString("Assist Mode: ", "off");
@@ -343,4 +482,13 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		LiveWindow.run();
 	}
+	/*
+	 * Pixels    |    Distance from Goal
+	 * 191            58 
+	 * 197            49
+	 * 210            37
+	 * 235            25
+	 * 286            13
+	 * 307            7
+	 */
 }
