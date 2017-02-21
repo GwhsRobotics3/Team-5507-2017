@@ -1,10 +1,5 @@
 package org.usfirst.frc.team5507.robot;
 
-import org.opencv.core.Rect;
-import org.opencv.imgproc.Imgproc;
-
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 //import edu.wpi.first.wpilibj.command.Command; //may delete
 //import edu.wpi.first.wpilibj.buttons.Button; //may delete
 //import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -16,12 +11,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.RobotDrive.MotorType;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.vision.VisionThread;
 
 /**
  * Check out the camera class. You won't understand it. 
@@ -35,6 +28,7 @@ import edu.wpi.first.wpilibj.vision.VisionThread;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
+
 public class Robot extends IterativeRobot {
 	SendableChooser autoChooser;
 	
@@ -108,7 +102,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousPeriodic() {
 		SmartDashboard.putNumber("autoTimer", timerAuto.get());
 		SmartDashboard.putNumber("caseAuto", caseAuto);
-
+		
 		switch(caseAuto){
 		case 0:
 			this.autonomousBox();
@@ -169,7 +163,7 @@ public class Robot extends IterativeRobot {
 	}
 	
 	public double getDistanceToWallInInches(double x){
-		return 0.0039494*x*x-2.3615*x+361.92;
+		return 0.0039494*x*x - 2.3615*x + 361.92;
 	}
 	
 	/**
@@ -250,6 +244,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("rotateDrive: ", rotateDrive);
 		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
 	}
+	
 	public void autonomousCameraLeftSide(){
 		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
 		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
@@ -263,16 +258,16 @@ public class Robot extends IterativeRobot {
 			yDrive = 0;
 			rotateDrive = -0.025;
 			
-			if(camera.getContoursFound() > 1 && (this.getCameraHorizontal()<0.1 && this.getCameraHorizontal()>-0.1)){
+			if(camera.getContoursFound() > 1 && this.getCameraHorizontal() < 0.1 && this.getCameraHorizontal() > -0.1){
 				autonomousState = 1;
 				timerAuto.reset();
 			}
 			break;
 		case 1: //drive forward until we get to the gear peg
-			if(this.getCameraOffsetFromCenter()<-0.05){
+			if(this.getCameraOffsetFromCenter() < -0.05){
 				xDrive = -0.4;
 			}
-			else if(this.getCameraOffsetFromCenter()>0.05){
+			else if(this.getCameraOffsetFromCenter() > 0.05){
 				xDrive = 0.4; //right
 			}
 			yDrive = -0.25; //forward
@@ -507,11 +502,11 @@ public class Robot extends IterativeRobot {
 		if(stick.getRawButton(1)) {// Button 1 is A
 			climber.set(1);
 			SmartDashboard.putString("Climber Direction : ", "down");
-		} 
+		}
 		else if(stick.getRawButton(2) ) { // button 2 is B 
 			climber.set(-1);
 			SmartDashboard.putString("Climber Direction : ", "up");
-		} 
+		}
 		else{
 			climber.set(0);
 		}
@@ -519,7 +514,6 @@ public class Robot extends IterativeRobot {
 		if(timerPneumatics.get() == 0){
 			timerPneumatics.start();
 		}
-		
 		
 		switch(state){
 			case 0 : // Open Listen for Button
