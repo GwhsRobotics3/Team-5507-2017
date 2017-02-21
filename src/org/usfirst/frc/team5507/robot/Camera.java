@@ -79,10 +79,10 @@ public class Camera {
 						Rect rectI = Imgproc.boundingRect(pipeline.filterContoursOutput().get(i));
 						//Imgproc.rectangle(mat, new Point(rectI.x,rectI.y), new Point(rectI.x+rectI.width,rectI.y+rectI.height), new Scalar(255, 255, 255), 2);
 						if(rectI.area()>biggestRect.area()){
-							biggestRect = rectI;
+							biggestRect = rectI.clone();
 						}
 						else if(rectI.area()>secondBiggestRect.area()){
-							secondBiggestRect = rectI;
+							secondBiggestRect = rectI.clone();
 						}
 					}
 					centerX = (biggestRect.x+biggestRect.width/2 + secondBiggestRect.x+secondBiggestRect.width/2)/2;

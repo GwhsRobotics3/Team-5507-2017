@@ -136,10 +136,14 @@ public class Robot extends IterativeRobot {
 	 * Code that gets a value from -1 to 1 representing x value distance from center.
 	 * @return value from -1 to 1 representing offset from center
 	 */
-	public double getCameraOffsetFromCenter(){
-		int cameraOffsetFromCenter = 0;
-		if(camera.getCenterX() != 0){
-			cameraOffsetFromCenter = ((int)camera.getCenterX()-camera.getImgWidth()/2)/(camera.getImgWidth()/2);
+	public double getCameraOffsetFromCenter(){ //image is rotated 270 degrees
+		double cameraOffsetFromCenter = 0;
+		if(camera.getCenterY() != 0){
+			double temp_centerY = camera.getCenterY();
+			double temp_imgHeight = (double)camera.getImgHeight();
+			double temp_numerator = temp_centerY-temp_imgHeight/2.0;
+			cameraOffsetFromCenter = temp_numerator/(temp_imgHeight/2.0);
+			//cameraOffsetFromCenter = ((camera.getCenterY()-(double)(camera.getImgHeight())/2.0))/(double)(camera.getImgHeight())/2.0;
 		}
 		return cameraOffsetFromCenter;
 	}
@@ -261,6 +265,11 @@ public class Robot extends IterativeRobot {
 		if(stick.getRawButton(6))
 		{
 			xDrive = this.getCameraOffsetFromCenter();
+			SmartDashboard.putString("Assist Mode: ", "on");
+			myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0);
+		}
+		else{
+			SmartDashboard.putString("Assist Mode: ", "off");
 		}
 		
 		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0);
@@ -268,14 +277,20 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("xDrive: ", xDrive);
 		SmartDashboard.putNumber("yDrive: ", yDrive);
 		SmartDashboard.putNumber("rotateDrive: ", rotateDrive);	
-		
+		SmartDashboard.putNumber("centerX: ", camera.getCenterY());
+		SmartDashboard.putNumber("centerY: ", camera.getCenterX());
+		SmartDashboard.putNumber("imgHeight: ", camera.getImgHeight());
+
 		// control Climber code
 		if(stick.getRawButton(1)) {// Button 1 is A
 			climber.set(1);
+			SmartDashboard.putString("Climber Direction : ", "down");
 		} 
-		if(stick.getRawButton(2) ) { // button 2 is B
+		else if(stick.getRawButton(2) ) { // button 2 is B 
 			climber.set(-1);
-		} else {
+			SmartDashboard.putString("Climber Direction : ", "up");
+		} 
+		else{
 			climber.set(0);
 		}
 		
