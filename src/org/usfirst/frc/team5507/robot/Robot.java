@@ -77,6 +77,7 @@ public class Robot extends IterativeRobot {
 		autoChooser.addObject("Camera", 1);
 		autoChooser.addObject("Straight", 2);
 		autoChooser.addObject("Camera Left", 3);
+		autoChooser.addObject("Camera Right", 4);
 
 		SmartDashboard.putData("Autonomous Mode Chooser", autoChooser);
 		myRobot.setInvertedMotor(MotorType.kRearLeft, false);
@@ -120,6 +121,9 @@ public class Robot extends IterativeRobot {
 			break;
 		case 3:
 			this.autonomousCameraLeftSide();
+			break;
+		case 4:
+			this.autonomousCameraRightSide();
 			break;
 		}
 				//myRobot.mecanumDrive_Cartesian(1, -0.055, 0, 0); //right
@@ -270,6 +274,84 @@ public class Robot extends IterativeRobot {
 			}
 			else if(this.getCameraOffsetFromCenter()>0.05){
 				xDrive = 0.4; //right
+			}
+			yDrive = -0.25; //forward
+			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
+				autonomousState = 2;
+				timerAuto.reset();
+			}
+			break;
+		case 2:
+			xDrive = this.getCameraOffsetFromCenter()*(0.25);
+			yDrive = -0.25;//forward
+			if(timerAuto.get() > 1.0){
+				autonomousState = 3;
+				timerAuto.reset();
+			}
+			break;
+		case 3: //open gear holder and wait
+			this.openGearHolder();
+			if(timerAuto.get() > 1.5){
+				autonomousState =4;
+				timerAuto.reset();
+			}
+			break;
+		case 4: //drive back to clear
+			xDrive = 0.15*0.25;
+			yDrive = 0.25;//back
+			if(timerAuto.get() > 3.0){
+				timerAuto.reset();
+				autonomousState = 5;
+			}
+			break;
+		case 5:
+			this.closeGearHolder();
+			xDrive = 1*0.25;
+			yDrive = -0.055*0.25;//right
+			if(timerAuto.get() > 0.5){
+				autonomousState = 6;
+			}
+			break;
+		case 6:
+			xDrive = this.getCameraOffsetFromCenter()*0.25;
+			yDrive = -1*0.25; //forward
+			if(timerAuto.get() > 4.0){
+				autonomousState = 7;
+			}
+			break;
+		case 7:
+			break;
+		}
+		SmartDashboard.putNumber("xDrive: ", xDrive);
+		SmartDashboard.putNumber("yDrive: ", yDrive);
+		SmartDashboard.putNumber("rotateDrive: ", rotateDrive);
+		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
+	}
+	
+	public void autonomousCameraRightSide(){
+		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
+		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
+		double xDrive = 0;
+		double yDrive = 0;
+		double rotateDrive = 0;
+		
+		switch(autonomousState){
+		case 0:
+			xDrive = 0.5;
+			yDrive = 0;
+			rotateDrive = 0.025;
+			
+			if(camera.getContoursFound() > 1 && (this.getCameraHorizontal()<0.1 && this.getCameraHorizontal()>-0.1)){
+				autonomousState = 1;
+				timerAuto.reset();
+			}
+			break;
+		case 1: //drive forward until we get to the gear peg
+			if(this.getCameraOffsetFromCenter()<-0.05){
+				xDrive = 0.4;
+			}
+			else if(this.getCameraOffsetFromCenter()>0.05){
+				xDrive = -0.4; //right
 			}
 			yDrive = -0.25; //forward
 			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
