@@ -1,22 +1,10 @@
 package org.usfirst.frc.team5507.robot;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.HashMap;
-
 import edu.wpi.first.wpilibj.vision.VisionPipeline;
-
 import org.opencv.core.*;
-import org.opencv.core.Core.*;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.*;
-import org.opencv.objdetect.*;
 
 /**
 * GripPipeline class.
@@ -50,9 +38,9 @@ public class GripPipeline implements VisionPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = resizeImageOutput;
-		double[] hsvThresholdHue = {95.88489208633091, 109.5757575757576};
-		double[] hsvThresholdSaturation = {220.14388489208633, 255.0};
-		double[] hsvThresholdValue = {158.22841726618702, 255.0};
+		double[] hsvThresholdHue = {57.88489208633091, 95.5757575757576};
+		double[] hsvThresholdSaturation = {135.14388489208633, 201.0};
+		double[] hsvThresholdValue = {213.22841726618702, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
