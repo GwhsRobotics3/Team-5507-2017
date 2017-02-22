@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
 	 * This function is run once each time the robot enters autonomous mode
 	 */
 	@Override
-	public void autonomousInit() {
+	public void autonomousInit() {ZZ
 		timer.reset();
 		timer.start();
 		timerAuto.start();
