@@ -112,6 +112,10 @@ public class Robot extends IterativeRobot {
 				//myRobot.mecanumDrive_Cartesian(0.09, -1, 0, 0); //forward
 	}
 	
+	/**
+	 * method to get horizontal offset from center
+	 * @return a double representing horizontal offset from center
+	 */
 	public double getCameraHorizontal(){ //image is rotated 270 degrees because camera is placed sideways
 		double cameraOffsetFromCenter = 0;
 		double temp_centerY = camera.getCenterY();
@@ -121,6 +125,10 @@ public class Robot extends IterativeRobot {
 		return cameraOffsetFromCenter;
 	}
 	
+	/**
+	 * method to get vertical offset from center
+	 * @return a double representing vertical offset from center
+	 */
 	public double getCameraVertical(){
 		double cameraOffsetFromCenter = 0;
 		double temp_centerX = camera.getCenterX();
@@ -148,8 +156,13 @@ public class Robot extends IterativeRobot {
 		
 	}
 	
-	public double getDistanceToWallInInches(double x){
-		return 0.0039494*x*x - 2.3615*x + 361.92;
+	/**
+	 * method to get approx. distance between wall and robot in inches
+	 * @param pixels number of pixels
+	 * @return a double representing inches from wall and robot 
+	 */
+	public double getDistanceToWallInInches(double pixels){
+		return 0.0039494*pixels*pixels - 2.3615*pixels + 361.92;
 	}
 	
 	/**
@@ -231,6 +244,9 @@ public class Robot extends IterativeRobot {
 		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
 	}
 	
+	/**
+	 * method to autonomously drive robot if it starts on the left side 
+	 */
 	public void autonomousCameraLeftSide(){
 		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
 		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
@@ -309,6 +325,9 @@ public class Robot extends IterativeRobot {
 		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
 	}
 	
+	/**
+	 * method to autonomously drive robot if it starts on the right side
+	 */
 	public void autonomousCameraRightSide(){
 		SmartDashboard.putNumber("Distance from wall: ", this.getDistanceToWallInInches(camera.getCenterX()));
 		SmartDashboard.putNumber("Autonomous State: ", autonomousState);
@@ -387,6 +406,9 @@ public class Robot extends IterativeRobot {
 		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, rotateDrive, 0);
 	}
 		
+	/**
+	 * method to autonomously drive robot in a box
+	 */
 	public void autonomousBox(){
 		if(timerAuto.get()>0 && timerAuto.get()<0.25){
 			myRobot.mecanumDrive_Cartesian(0.09, -1, 0, 0); //FORWARD
