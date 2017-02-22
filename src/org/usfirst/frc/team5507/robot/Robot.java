@@ -44,7 +44,7 @@ public class Robot extends IterativeRobot {
 	DoubleSolenoid solenoid2 = new DoubleSolenoid(2, 3);
 	static Camera camera;
 	private final Object imgLock = new Object();
-	
+	//Tony broke the robot(that's right, again...)
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code. B Money is funny :)
@@ -71,12 +71,8 @@ public class Robot extends IterativeRobot {
 	 * This function is run once each time the robot enters autonomous mode
 	 */
 	@Override
-<<<<<<< HEAD
-	public void autonomousInit() {ZZ
-=======
 	public void autonomousInit() {
 		this.closeGearHolder();
->>>>>>> origin/master
 		timer.reset();
 		timer.start();
 		timerAuto.start();
