@@ -24,10 +24,19 @@ public class Camera {
 	public static double[] queueX = new double[5];
 	public static double[] queueY = new double[5];
 	
+	/**
+	 * Constructor for a camera object
+	 */
 	public Camera() {
 		enableVisionThread();
 	}
 	
+	/**
+	 * method that calculated avg center x value based on an array. Replaces last place int, moves everything down, and adds new number
+	 * @param values array of center x values
+	 * @param x new center x value
+	 * @return center x average
+	 */
 	public double averageCenter (double[] values, double x){
 		for(int i = 3; i>=0; i--){
 			values[i+1] = values[i];
