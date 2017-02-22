@@ -1,8 +1,5 @@
 package org.usfirst.frc.team5507.robot;
 
-//import edu.wpi.first.wpilibj.command.Command; //may delete
-//import edu.wpi.first.wpilibj.buttons.Button; //may delete
-//import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -17,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * Check out the camera class. You won't understand it. 
+ * Check out all our code. You won't understand it. 
  * Howard He wrote the first half, Legina Chen wrote the
  * second half, but Meau Bonton is the "real" software leader.
  * Call (415) 400-6078 for help. Good luck.
@@ -31,30 +28,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends IterativeRobot {
 	SendableChooser autoChooser;
-	
 	Joystick stick = new Joystick(0); 
 	RobotDrive myRobot = new RobotDrive(0, 1, 2, 3);
 	Spark climber = new Spark(4);
-	 
 	Timer timer = new Timer();
 	Timer timerMotor = new Timer();
 	Timer timerAuto = new Timer();
 	Timer timerPneumatics = new Timer();
-	
-	//private GripPipeline pipeline;
-	
 	Compressor c = new Compressor(0);
-	
 	int caseAuto = 0;
 	int state = 0;
 	int autonomousState = 0;
-	
-	
 	DigitalOutput relay = new DigitalOutput(0);
-	
 	DoubleSolenoid solenoid1 = new DoubleSolenoid(0, 1);
 	DoubleSolenoid solenoid2 = new DoubleSolenoid(2, 3);
-	
 	static Camera camera;
 	private final Object imgLock = new Object();
 	
@@ -72,7 +59,6 @@ public class Robot extends IterativeRobot {
 		autoChooser.addObject("Straight", 2);
 		autoChooser.addObject("Camera Left", 3);
 		autoChooser.addObject("Camera Right", 4);
-
 		SmartDashboard.putData("Autonomous Mode Chooser", autoChooser);
 		myRobot.setInvertedMotor(MotorType.kRearLeft, false);
 		myRobot.setInvertedMotor(MotorType.kFrontLeft, false);
@@ -458,8 +444,6 @@ public class Robot extends IterativeRobot {
 //		if(stick.getRawButton(4)){
 //			relay.set(false);
 //		}
-		
-		
 		double xDrive = 0.;
 		double yDrive = 0.;
 		double rotateDrive = 0.0;

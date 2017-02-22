@@ -36,6 +36,9 @@ public class Camera {
 		return (values[0]+values[1]+values[2]+values[3]+values[4])/5;
 	}
 	
+	/**
+	 * method to initialize camera
+	 */
 	public void enableVisionThread() {
 		pipeline = new GripPipeline();
 		AxisCamera camera = CameraServer.getInstance().addAxisCamera("10.55.7.37");
@@ -72,8 +75,8 @@ public class Camera {
 				Imgproc.rectangle(mat, new Point(centerX-1,centerY-1), new Point(centerX+1,centerY+1), new Scalar(0, 50, 220), 5);		
 				outputStream.putFrame(mat); //give stream (and CameraServer) a new frame
 				SmartDashboard.putNumber("numberOfContoursFound", pipeline.filterContoursOutput().size());
-				SmartDashboard.putNumber("CenterX", this.getCenterX());
-				SmartDashboard.putNumber("CenterY", this.getCenterY());
+				//SmartDashboard.putNumber("CenterX", this.getCenterX());
+				//SmartDashboard.putNumber("CenterY", this.getCenterY());
 				
 				continue;
 			}
@@ -82,32 +85,56 @@ public class Camera {
 		visionThread.start();
 	}
 	
+	/**
+	 * method to get the area
+	 * @return a double representing area
+	 */
 	public double getArea(){
 		synchronized(imgLock) {
 			return rectangleArea;
 		}
 	}
 	
+	/**
+	 * method to get the y value 
+	 * @return a double representing center y
+	 */
 	public double getCenterY() {
 		synchronized(imgLock) {
 			return centerY;
 		}
 	}
 
+	/**
+	 * method to get center x value
+	 * @return a double representing center x
+	 */
 	public double getCenterX() {
 		synchronized(imgLock) {
 			return centerX;
 		}
 	}
 	
+	/**
+	 * method to get number of contours found
+	 * @return an int representing number of contours found
+	 */
 	public int getContoursFound() {
 		return pipeline.filterContoursOutput().size();
 	}
 	
+	/**
+	 * method to get width of image
+	 * @return an int representing image width
+	 */
 	public int getImgWidth(){
 		return imgWidth;
 	}
 	
+	/**
+	 * method to get height of image
+	 * @return an int representing image height
+	 */
 	public int getImgHeight(){
 		return imgHeight;
 	}
