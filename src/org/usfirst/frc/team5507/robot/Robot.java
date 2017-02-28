@@ -185,11 +185,11 @@ public class Robot extends IterativeRobot {
 		
 		switch(autonomousState){
 		case 0: //drive forward until we get to the gear peg
-			if(this.getCameraOffsetFromCenter()<-0.2){
-				xDrive = -0.25;
+			if(this.getCameraOffsetFromCenter()<-0.12){
+				xDrive = -0.4;
 			}
-			else if(this.getCameraOffsetFromCenter()>0.2){
-				xDrive = 0.25; //right
+			else if(this.getCameraOffsetFromCenter()>0.12){
+				xDrive = 0.4; //right
 			}
 			yDrive = -0.25; //forward
 			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
@@ -220,23 +220,57 @@ public class Robot extends IterativeRobot {
 				autonomousState = 4;
 			}
 			break;
-		case 4:
-			this.closeGearHolder();
-			xDrive = 1*0.25;
-			yDrive = -0.055*0.25;//right
-			if(timerAuto.get() > 0.5){
+		case 4: //drive back to clear
+			xDrive = 0.15*0.25;
+			yDrive = 0.25;//back
+			if(timerAuto.get() > 1.0){
+				timerAuto.reset();
 				autonomousState = 5;
 			}
 			break;
 		case 5:
-			xDrive = this.getCameraOffsetFromCenter()*0.25;
-			yDrive = -1*0.25; //forward
-			if(timerAuto.get() > 4.0){
+			this.closeGearHolder();
+			//xDrive = 1*0.25;
+			//yDrive = -0.055*0.25;//right
+			xDrive = 0;
+			yDrive = 0;
+			rotateDrive = 1;
+			//yDrive = -0.5;
+			if(timerAuto.get() > 0.2){
 				autonomousState = 6;
 			}
 			break;
 		case 6:
+			yDrive = -0.5;
+			if(timerAuto.get() > 0.25){
+				autonomousState = 7;
+			}
+		case 7:
+			xDrive = 0;
+			yDrive = 0;
+			rotateDrive = -1;
+			//yDrive = -0.5;
+			if(timerAuto.get() > 0.2){
+				autonomousState = 8;
+			}
 			break;
+		case 8:
+			xDrive = 0;
+			yDrive = -0.5;
+			if(timerAuto.get() > 0.25){
+				autonomousState = 9;
+			}
+			break;
+		case 9:
+			xDrive = this.getCameraOffsetFromCenter()*0.25;
+			yDrive = -1*0.25; //forward
+			if(timerAuto.get() > 4.0){
+				autonomousState = 10;
+			}
+			break;
+		case 10:
+			break;
+		
 		}
 		SmartDashboard.putNumber("xDrive: ", xDrive);
 		SmartDashboard.putNumber("yDrive: ", yDrive);
@@ -273,7 +307,7 @@ public class Robot extends IterativeRobot {
 				xDrive = 0.4; //right
 			}
 			yDrive = -0.25; //forward
-			if(this.getDistanceToWallInInches(camera.getCenterX()) < 12){
+			if(this.getDistanceToWallInInches(camera.getCenterY()) < 12){
 				autonomousState = 2;
 				timerAuto.reset();
 			}
@@ -303,20 +337,45 @@ public class Robot extends IterativeRobot {
 			break;
 		case 5:
 			this.closeGearHolder();
-			xDrive = 1*0.25;
-			yDrive = -0.055*0.25;//right
+			//xDrive = 1*0.25;
+			//yDrive = -0.055*0.25;//right
+			xDrive = 0;
+			yDrive = 0;
+			rotateDrive = -1;
+			//yDrive = -0.5;
 			if(timerAuto.get() > 0.5){
 				autonomousState = 6;
 			}
 			break;
 		case 6:
+			yDrive = -0.5;
+			if(timerAuto.get() > 0.25){
+				autonomousState = 7;
+			}
+		case 7:
+			xDrive = 0;
+			yDrive = 0;
+			rotateDrive = 0.5;
+			//yDrive = -0.5;
+			if(timerAuto.get() > 0.5){
+				autonomousState = 8;
+			}
+			break;
+		case 8:
+			xDrive = 0;
+			yDrive = -0.5;
+			if(timerAuto.get() > 0.25){
+				autonomousState = 9;
+			}
+			break;
+		case 9:
 			xDrive = this.getCameraOffsetFromCenter()*0.25;
 			yDrive = -1*0.25; //forward
 			if(timerAuto.get() > 4.0){
-				autonomousState = 7;
+				autonomousState = 10;
 			}
 			break;
-		case 7:
+		case 10:
 			break;
 		}
 		SmartDashboard.putNumber("xDrive: ", xDrive);
@@ -439,7 +498,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopInit() { 
-		this.closeGearHolder();
+		this.openGearHolder();
 	}
 		
 	public void closeGearHolder(){
@@ -471,7 +530,11 @@ public class Robot extends IterativeRobot {
 		double rotateDrive = 0.0;
 		
 		if(Math.abs(stick.getX())>0.25 ) {
-			xDrive = stick.getX();
+			xDrive = stick.getX()*0.75;
+			c.stop(); //Need to test to stop compressor
+		}
+		else{
+			c.start(); //Need to test to start again
 		}
 		if(Math.abs(stick.getY())>0.25 ) {
 			yDrive = stick.getY();
@@ -495,7 +558,7 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putString("Assist Mode: ", "off");
 		}
 		
-		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0);
+		myRobot.mecanumDrive_Cartesian(xDrive*0.75, yDrive*0.75, -rotateDrive,0); //0.75 celing on max speed
 		
 		SmartDashboard.putNumber("xDrive: ", xDrive);
 		SmartDashboard.putNumber("yDrive: ", yDrive);
