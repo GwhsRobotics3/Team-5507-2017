@@ -573,7 +573,7 @@ public class Robot extends IterativeRobot {
 			SmartDashboard.putString("Assist Mode: ", "off");
 		}
 		
-		myRobot.mecanumDrive_Cartesian(xDrive * 0.75, yDrive * 0.75, -rotateDrive,0); //0.75 ceiling on max speed
+		myRobot.mecanumDrive_Cartesian(xDrive, yDrive, -rotateDrive,0); //0.75 ceiling on max speed
 		
 		
 		SmartDashboard.putNumber("xDrive: ", xDrive);
